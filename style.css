@@ -1,0 +1,923 @@
+/* ============================================
+   VVF Autorespiratore - Stili
+   Ispirato a vvfstoroair.lovable.app (APVR)
+   Mobile-first, nessuna dipendenza esterna
+   ============================================ */
+
+:root {
+  --bg-page: #0f0f14;
+  --bg-card: #1a1a2e;
+  --bg-input: #252538;
+  --text-primary: #e8e8ed;
+  --text-secondary: #a0a0b0;
+  --accent: #2563eb;
+  --accent-hover: #3b82f6;
+  --danger: #dc2626;
+  --danger-bg: rgba(220, 38, 38, 0.2);
+  --border: #2d2d42;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --safe-area-inset: env(safe-area-inset-bottom, 0);
+  /* Toggle */
+  --toggle-off: #3d3d52;
+  --toggle-on: var(--accent);
+  --toggle-thumb: #fff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, sans-serif;
+  background: var(--bg-page);
+  color: var(--text-primary);
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-bottom: calc(24px + var(--safe-area-inset));
+  line-height: 1.4;
+}
+
+/* Vista principale / dettaglio */
+.vista {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.vista[hidden] {
+  display: none;
+}
+
+/* Header in stile app professionale */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0));
+  text-align: center;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.header-logo {
+  height: 80px;
+  width: auto;
+  vertical-align: middle;
+  margin-right: 12px;
+  display: inline-block;
+}
+
+.container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title,
+.card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Card unificate (config + monitor) come riferimento APVR */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-config .section-title {
+  margin-bottom: 16px;
+}
+
+/* Riga Tempo accelerato: label + toggle */
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.toggle-row .label {
+  margin-bottom: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.toggle-track {
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  background: var(--toggle-off);
+  border-radius: 14px;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.toggle[aria-checked="true"] .toggle-track {
+  background: var(--toggle-on);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: var(--toggle-thumb);
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.toggle[aria-checked="true"] .toggle-thumb {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  min-width: 28px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.toggle[aria-checked="true"] .toggle-label {
+  color: var(--accent);
+}
+
+/* Campi form */
+.field {
+  margin-bottom: 16px;
+}
+
+.field:last-of-type {
+  margin-bottom: 0;
+}
+
+.field label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.field select,
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0a0b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.field input {
+  background-image: none;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Squadra: pulsanti vigili */
+.vigili-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-vigile {
+  flex: 1;
+  min-width: 120px;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.btn-aggiungi {
+  background: var(--accent);
+  color: white;
+  border: none;
+}
+
+.btn-aggiungi:hover {
+  background: var(--accent-hover);
+}
+
+.btn-elimina {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-elimina:hover {
+  background: #2d2d42;
+}
+
+/* Pill/tag vigili (come nell’immagine di riferimento) */
+.vigili-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 36px;
+  margin-top: 12px;
+  padding: 8px 0;
+}
+
+.vigile-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.vigile-pill .pill-nome {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vigile-pill .pill-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.vigile-pill .pill-remove:hover {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+/* Intestazione squadra nella card monitoraggio */
+.squadra-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.squadra-nomi {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.squadra-bar {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.squadra-header .squadra-bar.bar-basso {
+  color: var(--danger);
+}
+
+/* Lista card squadre */
+.squadre-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  margin-bottom: 0;
+}
+
+.squadra-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+
+.squadra-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.squadra-card-nomi {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.squadra-card-bar {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.squadra-card-bar.bar-basso { color: var(--danger); }
+
+/* Allarme: bar < 65 – sfondo giallo */
+.squadra-card.sotto-65 {
+  background: rgba(202, 138, 4, 0.25);
+  border-color: #ca8a04;
+  box-shadow: 0 0 0 2px rgba(202, 138, 4, 0.4);
+}
+
+.squadra-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.squadra-card-grid .monitor-item {
+  padding: 10px 12px;
+}
+
+.squadra-card-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.squadra-card-footer .btn {
+  flex: 1;
+  min-height: 44px;
+  font-size: 0.95rem;
+}
+
+.btn-vai { background: var(--accent); color: white; border: none; }
+.btn-vai:hover { background: var(--accent-hover); }
+.btn-elimina-card { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); }
+.btn-elimina-card:hover { background: #2d2d42; }
+.btn-elimina-card .btn-icon { font-size: 1rem; }
+
+/* Vista dettaglio squadra */
+.header-dettaglio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.btn-back {
+  padding: 8px 12px;
+  font-size: 1.25rem;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-back:hover { color: var(--accent); }
+
+.header-dettaglio .app-title {
+  flex: 1;
+  font-size: 1.15rem;
+}
+
+.dettaglio-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-dettaglio {
+  flex: 1;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-avvia { background: var(--danger); color: white; }
+.btn-avvia:hover { background: #b91c1c; }
+.btn-pausa { background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border); }
+.btn-pausa:hover { background: #2d2d42; }
+.btn-fine { background: var(--danger); color: white; }
+.btn-fine:hover { background: #b91c1c; }
+
+/* Dopo clic su Fine: Avvia e Pausa cambiano colore (grigio/spento) */
+.dettaglio-controls.sessione-terminata .btn-avvia,
+.dettaglio-controls.sessione-terminata .btn-pausa {
+  background: #3d3d52;
+  color: var(--text-secondary);
+  border-color: var(--border);
+  cursor: default;
+}
+.dettaglio-controls.sessione-terminata .btn-avvia:hover,
+.dettaglio-controls.sessione-terminata .btn-pausa:hover {
+  background: #3d3d52;
+  color: var(--text-secondary);
+}
+
+.card-metriche {
+  margin-bottom: 16px;
+}
+
+.card-metriche .monitor-item {
+  margin-bottom: 0;
+}
+
+.monitor-item-input .label { display: block; margin-bottom: 6px; }
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.input-row input {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.card-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.card-vigili-dettaglio .card-subtitle { margin-bottom: 0; }
+
+.card-vigili-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.dett-vigili-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dett-vigile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.dett-vigile-row .nome { font-weight: 500; }
+.dett-vigile-remove {
+  padding: 6px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.dett-vigile-remove:hover { color: var(--danger); }
+
+.container-dettaglio { padding-bottom: 32px; }
+
+/* Card grafico andamento */
+.card-grafico {
+  margin-top: 20px;
+}
+
+.card-grafico .card-subtitle {
+  margin-bottom: 8px;
+}
+
+.grafico-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.legend-color.bar-color { background: #3b82f6; }
+.legend-color.consumo-color { background: #f59e0b; }
+
+#grafico-canvas {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+}
+
+/* Vista dettaglio: allarme bar < 65 – sfondo giallo */
+#vista-dettaglio.sotto-65 {
+  background: rgba(202, 138, 4, 0.15);
+}
+
+#vista-dettaglio.sotto-65 .card-metriche {
+  background: rgba(202, 138, 4, 0.2);
+  border-color: #ca8a04;
+  box-shadow: 0 0 0 2px rgba(202, 138, 4, 0.3);
+}
+
+#vista-dettaglio.sotto-65 .header-dettaglio {
+  background: rgba(202, 138, 4, 0.2);
+  border-bottom-color: #ca8a04;
+}
+
+/* Popup gestione vigili */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+}
+
+.popup-overlay[hidden] {
+  display: none;
+}
+
+.popup {
+  width: 100%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.popup-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.popup-section {
+  margin-bottom: 18px;
+}
+
+.popup-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.popup-lista-nomi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.popup-nome-btn {
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.popup-nome-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.popup-nome-btn.gia-in-squadra {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.popup-aggiungi-row {
+  display: flex;
+  gap: 8px;
+}
+
+.popup-aggiungi-row input {
+  flex: 1;
+  padding: 12px 14px;
+  font-size: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.popup-aggiungi-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.popup-vigili-attuali {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 0;
+}
+
+.popup-vigili-attuali .vigile-pill {
+  margin: 0;
+}
+
+.popup-message {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding: 10px 0;
+  margin: 0;
+}
+
+.popup-message[hidden] {
+  display: none;
+}
+
+.btn-small {
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 8px;
+}
+
+#popup-chiudi {
+  margin-top: 16px;
+}
+
+/* Pulsanti */
+.buttons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 52px;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-primary.pausa {
+  background: #f59e0b;
+}
+
+.btn-primary.pausa:hover {
+  background: #fbbf24;
+}
+
+.btn-secondary {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: #2d2d42;
+}
+
+/* Card monitoraggio */
+.card-monitor .card-title {
+  margin-bottom: 16px;
+}
+
+/* Empty state: "Nessuna sessione avviata..." come su APVR */
+.empty-state {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(37, 37, 56, 0.4);
+}
+
+.monitor-content {
+  margin-top: 0;
+}
+
+/* Avvisi visivi (no popup) */
+.avviso {
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.avviso-50 {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.avviso-0 {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+/* Griglia dati monitoraggio */
+.monitor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.monitor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--bg-input);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.monitor-item .label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.monitor-item .value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.monitor-item.autonomy-item .value.value-autonomia.sotto-5min {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.monitor-item .value.bar-basso {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+@media (min-width: 480px) {
+  .container {
+    padding: 24px;
+  }
+
+  .app-title {
+    font-size: 1.4rem;
+  }
+
+  .buttons-row {
+    margin-top: 24px;
+  }
+
+  .btn {
+    padding: 18px 24px;
+    font-size: 1.1rem;
+  }
+
+  .empty-state {
+    padding: 32px 24px;
+    font-size: 1rem;
+  }
+}

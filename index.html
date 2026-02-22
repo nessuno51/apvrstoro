@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>VVF Autorespiratore</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Vista principale: lista squadre -->
+  <div id="vista-lista" class="vista">
+    <header class="header">
+      <img src="logo ufficiale a colori.png" alt="Logo VVF Storo" class="header-logo">
+      <h1 class="app-title">VVF Storo Autorespiratore</h1>
+    </header>
+
+    <main class="container">
+      <section class="section input-section">
+        <div class="card card-config">
+          <h2 class="section-title">Configurazione</h2>
+
+          <div class="field field-row toggle-row">
+            <span class="label">Tempo accelerato</span>
+            <button type="button" id="toggle-accelerato" class="toggle" role="switch" aria-checked="false" aria-label="Attiva tempo accelerato">
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              <span class="toggle-label" id="toggle-label">Off</span>
+            </button>
+          </div>
+
+          <div class="field">
+            <label for="bombola">Tipo bombola</label>
+            <select id="bombola" aria-label="Selezione tipo bombola">
+              <option value="6">Acciaio 6 L</option> 
+              <option value="7">Acciaio 7 L</option>        
+              <option value="6.8">Composito 6.8 L</option>
+              <option value="7.2" selected>Composito 7.2 L</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="pressione">Pressione iniziale (bar)</label>
+            <input type="number" id="pressione" value="300" min="1" max="300" aria-label="Pressione iniziale in bar">
+          </div>
+
+          <div class="field">
+            <label for="consumo">Consumo medio (L/min)</label>
+            <input type="number" id="consumo" value="50" min="1" max="200" aria-label="Consumo medio in litri al minuto">
+          </div>
+
+          <div class="field field-squadra">
+            <label>Squadra – vigili</label>
+            <div class="vigili-actions">
+              <button type="button" id="btn-aggiungi-vigile" class="btn btn-vigile btn-aggiungi" aria-label="Apri finestra per aggiungere vigili">
+                <span class="btn-icon" aria-hidden="true">+</span> Aggiungi Vigile
+              </button>
+              <button type="button" id="btn-elimina-squadra" class="btn btn-vigile btn-elimina" aria-label="Elimina tutta la squadra">
+                <span class="btn-icon" aria-hidden="true">×</span> Elimina squadra
+              </button>
+            </div>
+            <div id="vigili-pills" class="vigili-pills" role="list" aria-label="Vigili in squadra"></div>
+          </div>
+
+          <div class="buttons-row">
+            <button type="button" id="btn-crea" class="btn btn-primary" aria-label="Crea nuova squadra">
+              CREA
+            </button>
+            <button type="button" id="btn-reset" class="btn btn-secondary" aria-label="Reset configurazione">
+              RESET
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section monitor-section">
+        <div class="card card-monitor">
+          <h2 class="card-title">Monitoraggio</h2>
+          <p id="empty-state" class="empty-state" role="status">
+            Nessuna squadra creata. Seleziona i vigili sopra e premi CREA.
+          </p>
+          <div id="squadre-list" class="squadre-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Popup gestione vigili (config) -->
+  <div id="popup-vigili" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popup-vigili-title" hidden>
+    <div class="popup">
+      <h3 id="popup-vigili-title" class="popup-title">Aggiungi vigili alla squadra</h3>
+      <div class="popup-section">
+        <span class="popup-label">Seleziona dalla lista</span>
+        <div id="popup-lista-nomi" class="popup-lista-nomi"></div>
+      </div>
+      <div class="popup-section">
+        <span class="popup-label">Aggiungi altro nome</span>
+        <div class="popup-aggiungi-row">
+          <input type="text" id="popup-nome-nuovo" placeholder="Nome" maxlength="30" aria-label="Nome da aggiungere">
+          <button type="button" id="popup-btn-aggiungi-nome" class="btn btn-small btn-primary">Aggiungi</button>
+        </div>
+      </div>
+      <div class="popup-section">
+        <span class="popup-label">Vigili in squadra</span>
+        <div id="popup-vigili-attuali" class="popup-vigili-attuali" role="list"></div>
+        <p id="popup-nessun-vigile" class="popup-message">Nessun vigile in squadra.</p>
+      </div>
+      <button type="button" id="popup-chiudi" class="btn btn-primary btn-block">Chiudi</button>
+    </div>
+  </div>
+
+  <!-- Vista dettaglio squadra (pagina "Vai") -->
+  <div id="vista-dettaglio" class="vista" hidden>
+    <header class="header header-dettaglio">
+      <button type="button" id="dettaglio-indietro" class="btn-back" aria-label="Indietro">←</button>
+      <h1 id="dettaglio-titolo" class="app-title">Squadra 1</h1>
+    </header>
+
+    <main class="container container-dettaglio">
+      <div id="dettaglio-controls" class="dettaglio-controls">
+        <button type="button" id="dettaglio-avvia" class="btn btn-dettaglio btn-avvia" aria-label="Avvia">
+          <span class="btn-icon">▷</span> Avvia
+        </button>
+        <button type="button" id="dettaglio-pausa" class="btn btn-dettaglio btn-pausa" aria-label="Pausa">
+          <span class="btn-icon">‖</span> Pausa
+        </button>
+        <button type="button" id="dettaglio-fine" class="btn btn-dettaglio btn-fine" aria-label="Fine">
+          <span class="btn-icon">□</span> Fine
+        </button>
+      </div>
+
+      <div class="card card-metriche">
+        <div class="monitor-item">
+          <span class="label">Tempo trascorso</span>
+          <span id="dett-tempo" class="value">00:00:00</span>
+        </div>
+        <div class="monitor-item">
+          <span class="label">Bar stimati</span>
+          <span id="dett-bar-stimati" class="value">--</span>
+        </div>
+        <div class="monitor-item monitor-item-input">
+          <span class="label">Bar attuali</span>
+          <div class="input-row">
+            <input type="number" id="dett-bar-attuali" placeholder="es. 250" min="0" max="300" aria-label="Bar attuali">
+            <button type="button" id="dett-aggiorna-bar" class="btn btn-small btn-secondary">Aggiorna</button>
+          </div>
+        </div>
+        <div class="monitor-item">
+          <span class="label">Consumo squadra</span>
+          <span id="dett-consumo" class="value">-- L/min</span>
+        </div>
+        <div class="monitor-item autonomy-item">
+          <span class="label">Autonomia stimata</span>
+          <span id="dett-autonomia" class="value value-autonomia">--:--:--</span>
+        </div>
+        <div class="monitor-item">
+          <span class="label">Litri residui</span>
+          <span id="dett-litri" class="value">-- L</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-subtitle">Consumo medio (L/min)</h3>
+        <input type="number" id="dett-consumo-input" value="50" min="1" max="200" aria-label="Consumo medio">
+      </div>
+
+      <div class="card card-vigili-dettaglio">
+        <div class="card-vigili-head">
+          <h3 id="dett-vigili-titolo" class="card-subtitle">Vigili (0)</h3>
+          <button type="button" id="dett-aggiungi-vigile" class="btn btn-small btn-primary">
+            <span class="btn-icon">+</span> Aggiungi
+          </button>
+        </div>
+        <div id="dett-vigili-list" class="dett-vigili-list" role="list"></div>
+        <p id="dett-nessun-vigile" class="popup-message">Nessun vigile.</p>
+      </div>
+
+      <div id="card-grafico" class="card card-grafico" hidden>
+        <h3 class="card-subtitle">Andamento Bar stimati e Consumo squadra</h3>
+        <div class="grafico-legend">
+          <span class="legend-item"><span class="legend-color bar-color"></span> Bar stimati</span>
+          <span class="legend-item"><span class="legend-color consumo-color"></span> Consumo (L/min)</span>
+        </div>
+        <canvas id="grafico-canvas" width="320" height="180" aria-label="Grafico andamento bar e consumo"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <!-- Popup aggiungi vigile (in dettaglio) -->
+  <div id="popup-dettaglio-vigili" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popup-dettaglio-vigili-title" hidden>
+    <div class="popup">
+      <h3 id="popup-dettaglio-vigili-title" class="popup-title">Aggiungi vigile</h3>
+      <div class="popup-section">
+        <span class="popup-label">Seleziona dalla lista</span>
+        <div id="popup-dett-lista-nomi" class="popup-lista-nomi"></div>
+      </div>
+      <div class="popup-section">
+        <span class="popup-label">Oppure inserisci nome</span>
+        <div class="popup-aggiungi-row">
+          <input type="text" id="popup-dett-nome" placeholder="Nome" maxlength="30">
+          <button type="button" id="popup-dett-aggiungi" class="btn btn-small btn-primary">Aggiungi</button>
+        </div>
+      </div>
+      <button type="button" id="popup-dett-chiudi" class="btn btn-primary btn-block">Chiudi</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
