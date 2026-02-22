@@ -11,7 +11,7 @@
   let vigili = [];
   let tempoAccelerato = false;
   const MOLTIPLICATORE_ACCELERATO = 10;
-  const NOMI_DISPONIBILI = ["Fabio", "Michele", "Rudi", "Andrea"];
+  const NOMI_DISPONIBILI = ["Fabio Mezzi", "Rudi Poletti", "Alessandro Giacco", "Alessandro Berti 02", "Michele Lovato", "Danilo Bertolotti", "Riccardo Zontini", "Stefano Manzoni", "Daniele Bonomini", "Andrea Mezzi", "Michele Giacometti", "Mirco Poletti", "Marco Melzani", "Gaia Pelanda", "Andrea Simoni", "Rolando Zanetti", "Riccardo Scalmazzi", "Riccardo Valentini", "Michele Mezzi", "Denis Mora", "Luigi Targhettini", "Pierantonio Scaglia", "Dario Beltramolli", "Matteo Sembenotti", "Claudio Righetti", "Denny Beltramolli", "AlessandroBerti 96", "Leonardo Zontini", "Yuri Cortella", "Claudio Caola", "Mattia Kerschbamer", "Maurizio Giovanelli", "Michele Tonini", "Gianluca Bertoli", "Francesco Romele", "Angelo Vanin"];
   let intervallo = null;
   let squadraSelezionataId = null;
   let allarmeInterval = null;
@@ -32,6 +32,9 @@
   const btnCrea = document.getElementById("btn-crea");
   const btnReset = document.getElementById("btn-reset");
   const popupVigili = document.getElementById("popup-vigili");
+  const popupCercaNome = document.getElementById("popup-cerca-nome");
+  const popupToggleStoro = document.getElementById("popup-toggle-storo");
+  const popupListaNomiContainer = document.getElementById("popup-lista-nomi-container");
   const popupListaNomi = document.getElementById("popup-lista-nomi");
   const popupNomeNuovo = document.getElementById("popup-nome-nuovo");
   const popupBtnAggiungiNome = document.getElementById("popup-btn-aggiungi-nome");
@@ -59,6 +62,9 @@
   const dettNessunVigile = document.getElementById("dett-nessun-vigile");
   const dettAggiungiVigile = document.getElementById("dett-aggiungi-vigile");
   const popupDettaglioVigili = document.getElementById("popup-dettaglio-vigili");
+  const popupDettCercaNome = document.getElementById("popup-dett-cerca-nome");
+  const popupDettToggleStoro = document.getElementById("popup-dett-toggle-storo");
+  const popupDettListaNomiContainer = document.getElementById("popup-dett-lista-nomi-container");
   const popupDettListaNomi = document.getElementById("popup-dett-lista-nomi");
   const popupDettNome = document.getElementById("popup-dett-nome");
   const popupDettAggiungi = document.getElementById("popup-dett-aggiungi");
@@ -430,13 +436,14 @@
     updateDettaglioUI();
   });
 
-  dettAggiungiVigile.addEventListener("click", function () {
-    popupDettaglioVigili.hidden = false;
-    popupDettNome.value = "";
+  function renderPopupDettListaNomi(filter) {
     const s = getSquadraById(squadraSelezionataId);
     if (!s) return;
+    const q = (filter || "").trim().toLowerCase();
     popupDettListaNomi.innerHTML = "";
-    NOMI_DISPONIBILI.forEach(function (nome) {
+    NOMI_DISPONIBILI.filter(function (nome) {
+      return !q || nome.toLowerCase().indexOf(q) !== -1;
+    }).forEach(function (nome) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "popup-nome-btn";
@@ -450,6 +457,16 @@
       });
       popupDettListaNomi.appendChild(btn);
     });
+  }
+
+  dettAggiungiVigile.addEventListener("click", function () {
+    popupDettaglioVigili.hidden = false;
+    popupDettNome.value = "";
+    popupDettCercaNome.value = "";
+    popupDettToggleStoro.setAttribute("aria-expanded", "true");
+    popupDettListaNomiContainer.classList.add("open");
+    renderPopupDettListaNomi("");
+    popupDettCercaNome.focus();
   });
 
   popupDettAggiungi.addEventListener("click", function () {
@@ -473,9 +490,12 @@
   function apriPopupVigili() {
     popupVigili.hidden = false;
     popupNomeNuovo.value = "";
-    renderPopupListaNomi();
+    popupCercaNome.value = "";
+    popupToggleStoro.setAttribute("aria-expanded", "true");
+    popupListaNomiContainer.classList.add("open");
+    renderPopupListaNomi("");
     renderPopupVigiliAttuali();
-    popupChiudi.focus();
+    popupCercaNome.focus();
   }
 
   function chiudiPopupVigili() {
@@ -483,18 +503,22 @@
     renderPills();
   }
 
-  function renderPopupListaNomi() {
+  function renderPopupListaNomi(filter) {
+    const q = (filter || "").trim().toLowerCase();
+    const vigiliInSquadra = vigili;
     popupListaNomi.innerHTML = "";
-    NOMI_DISPONIBILI.forEach(function (nome) {
+    NOMI_DISPONIBILI.filter(function (nome) {
+      return !q || nome.toLowerCase().indexOf(q) !== -1;
+    }).forEach(function (nome) {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "popup-nome-btn";
-      if (vigili.indexOf(nome) !== -1) btn.classList.add("gia-in-squadra");
+      if (vigiliInSquadra.indexOf(nome) !== -1) btn.classList.add("gia-in-squadra");
       btn.textContent = nome;
       btn.addEventListener("click", function () {
-        if (vigili.indexOf(nome) !== -1) return;
+        if (vigiliInSquadra.indexOf(nome) !== -1) return;
         vigili.push(nome);
-        renderPopupListaNomi();
+        renderPopupListaNomi(popupCercaNome.value);
         renderPopupVigiliAttuali();
       });
       popupListaNomi.appendChild(btn);
@@ -566,6 +590,22 @@
   btnAggiungiVigile.addEventListener("click", apriPopupVigili);
   btnEliminaSquadra.addEventListener("click", eliminaSquadra);
   popupBtnAggiungiNome.addEventListener("click", popupAggiungiNomeCustom);
+  popupCercaNome.addEventListener("input", function () {
+    renderPopupListaNomi(popupCercaNome.value);
+  });
+  popupToggleStoro.addEventListener("click", function () {
+    const expanded = popupToggleStoro.getAttribute("aria-expanded") === "true";
+    popupToggleStoro.setAttribute("aria-expanded", !expanded);
+    popupListaNomiContainer.classList.toggle("open", !expanded);
+  });
+  popupDettCercaNome.addEventListener("input", function () {
+    renderPopupDettListaNomi(popupDettCercaNome.value);
+  });
+  popupDettToggleStoro.addEventListener("click", function () {
+    const expanded = popupDettToggleStoro.getAttribute("aria-expanded") === "true";
+    popupDettToggleStoro.setAttribute("aria-expanded", !expanded);
+    popupDettListaNomiContainer.classList.toggle("open", !expanded);
+  });
   popupChiudi.addEventListener("click", chiudiPopupVigili);
   popupNomeNuovo.addEventListener("keydown", function (e) {
     if (e.key === "Enter") { e.preventDefault(); popupAggiungiNomeCustom(); }

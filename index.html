@@ -88,9 +88,17 @@
   <div id="popup-vigili" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popup-vigili-title" hidden>
     <div class="popup">
       <h3 id="popup-vigili-title" class="popup-title">Aggiungi vigili alla squadra</h3>
-      <div class="popup-section">
+      <div class="popup-section popup-section-lista">
         <span class="popup-label">Seleziona dalla lista</span>
-        <div id="popup-lista-nomi" class="popup-lista-nomi"></div>
+        <input type="text" id="popup-cerca-nome" class="popup-cerca-input" placeholder="Cerca nome..." aria-label="Cerca nella lista">
+        <div class="popup-dropdown-container">
+          <button type="button" id="popup-toggle-storo" class="popup-dropdown-toggle" aria-expanded="true" aria-controls="popup-lista-nomi-container">
+            <span>Storo</span><span class="popup-dropdown-arrow">▼</span>
+          </button>
+          <div id="popup-lista-nomi-container" class="popup-lista-container" role="listbox">
+            <div id="popup-lista-nomi" class="popup-lista-nomi" role="list"></div>
+          </div>
+        </div>
       </div>
       <div class="popup-section">
         <span class="popup-label">Aggiungi altro nome</span>
@@ -189,9 +197,17 @@
   <div id="popup-dettaglio-vigili" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="popup-dettaglio-vigili-title" hidden>
     <div class="popup">
       <h3 id="popup-dettaglio-vigili-title" class="popup-title">Aggiungi vigile</h3>
-      <div class="popup-section">
+      <div class="popup-section popup-section-lista">
         <span class="popup-label">Seleziona dalla lista</span>
-        <div id="popup-dett-lista-nomi" class="popup-lista-nomi"></div>
+        <input type="text" id="popup-dett-cerca-nome" class="popup-cerca-input" placeholder="Cerca nome..." aria-label="Cerca nella lista">
+        <div class="popup-dropdown-container">
+          <button type="button" id="popup-dett-toggle-storo" class="popup-dropdown-toggle" aria-expanded="true" aria-controls="popup-dett-lista-nomi-container">
+            <span>Storo</span><span class="popup-dropdown-arrow">▼</span>
+          </button>
+          <div id="popup-dett-lista-nomi-container" class="popup-lista-container" role="listbox">
+            <div id="popup-dett-lista-nomi" class="popup-lista-nomi" role="list"></div>
+          </div>
+        </div>
       </div>
       <div class="popup-section">
         <span class="popup-label">Oppure inserisci nome</span>
