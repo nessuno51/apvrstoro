@@ -424,6 +424,20 @@
       s.consumoMedio = Math.max(1, Math.min(200, Math.round(consumoDerived)));
       dettConsumoInput.value = s.consumoMedio;
     }
+    if (barVal != null && s.inEsecuzione && s.storicoGrafico.length > 0) {
+      s.storicoGrafico.push({ t: s.secondiTrascorsi, bar: barVal, consumo: s.consumoMedio });
+    }
+    dettConsumo.textContent = s.consumoMedio + " L/min";
+    dettAutonomia.textContent = formatOreMinutiSecondi(autonomiaSecondiPerSquadra(s));
+    dettAutonomia.classList.toggle("sotto-5min", autonomiaSecondiPerSquadra(s) > 0 && autonomiaSecondiPerSquadra(s) < 300);
+    dettLitri.textContent = litriResiduiPerSquadra(s) + " L";
+    dettBarStimati.textContent = barPerSquadra(s) + " bar";
+    dettBarStimati.classList.toggle("bar-basso", barPerSquadra(s) <= 50);
+    vistaDettaglio.classList.toggle("sotto-65", barPerSquadra(s) < SOGLIA_BAR_ALARM);
+    if (s.secondiTrascorsi >= 20 && s.storicoGrafico.length > 0) {
+      cardGrafico.hidden = false;
+      disegnaGrafico(s);
+    }
     updateDettaglioUI();
     aggiornaCardSquadra(s);
     aggiornaStatoAllarme();
