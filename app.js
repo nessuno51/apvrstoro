@@ -1,5 +1,6 @@
 /**
  * VVF Autorespiratore - Multi-squadre, vista dettaglio.
+ * FIX: aggiornamento Bar attuali con reset baseline + ricalcolo consumo sul segmento.
  * Nessuna dipendenza esterna. Compatibile con Capacitor.
  */
 
@@ -83,13 +84,14 @@
   }
 
   function barPerSquadra(s) {
-    if (s.barAttualiManuale != null) return s.barAttualiManuale;
     if (s.litriBombola <= 0) return 0;
-    const ariaTotale = s.litriBombola * s.pressioneIniziale;
-    const minutiTrascorsi = s.secondiTrascorsi / 60;
-    const ariaConsumata = s.consumoMedio * minutiTrascorsi;
-    const ariaResidua = Math.max(0, ariaTotale - ariaConsumata);
-    return Math.max(0, Math.round((ariaResidua / s.litriBombola) * 10) / 10);
+    const lastTime = s.lastKnownSeconds != null ? s.lastKnownSeconds : 0;
+    const deltaSeconds = s.secondiTrascorsi - lastTime;
+    const deltaMinuti = deltaSeconds / 60;
+    const barDrop = (s.consumoMedio * deltaMinuti) / s.litriBombola;
+    const baseBar = s.lastKnownBar != null ? s.lastKnownBar : s.pressioneIniziale;
+    const bar = baseBar - barDrop;
+    return Math.max(0, Math.round(bar * 10) / 10);
   }
 
   function autonomiaSecondiPerSquadra(s) {
@@ -126,7 +128,8 @@
       litriBombola: config.litriBombola,
       pressioneIniziale: config.pressioneIniziale,
       consumoMedio: config.consumoMedio,
-      barAttualiManuale: null,
+      lastKnownBar: config.pressioneIniziale,
+      lastKnownSeconds: 0,
       storicoGrafico: []
     };
     squadre.push(squadra);
@@ -228,7 +231,7 @@
     vistaDettaglio.hidden = false;
     dettaglioTitolo.textContent = "Squadra " + s.id;
     dettConsumoInput.value = s.consumoMedio;
-    dettBarAttuali.value = s.barAttualiManuale != null ? s.barAttualiManuale : "";
+    dettBarAttuali.value = "";
     dettBarAttuali.placeholder = "es. 250";
     renderDettaglioVigili();
     dettaglioAvvia.disabled = s.inEsecuzione || s.finePremuto;
@@ -411,36 +414,60 @@
     dettaglioControls.classList.add("sessione-terminata");
     updateDettaglioUI();
   });
-  dettAggiornaBar.addEventListener("click", function () {
+  dettAggiornaBar.addEventListener("click", function (e) {
+    e.preventDefault();
     const s = getSquadraById(squadraSelezionataId);
     if (!s) return;
+
     const v = parseInt(dettBarAttuali.value, 10);
-    const barVal = (isNaN(v) || v < 0) ? null : Math.min(300, v);
-    s.barAttualiManuale = barVal;
-    if (barVal != null && s.secondiTrascorsi > 0) {
-      const minutiTrascorsi = s.secondiTrascorsi / 60;
-      const litriConsumati = s.litriBombola * (s.pressioneIniziale - barVal);
-      const consumoDerived = minutiTrascorsi > 0 ? litriConsumati / minutiTrascorsi : s.consumoMedio;
-      s.consumoMedio = Math.max(1, Math.min(200, Math.round(consumoDerived)));
+    if (isNaN(v) || v < 0 || v > 300) return;
+
+    const barAttualeInserito = Math.min(300, Math.max(0, v));
+
+    // 1. Calcola Consumo medio (L/min) dalla differenza tra bar stimati e bar attuali
+    const barStimatiOra = barPerSquadra(s);
+    const tempoPrecedente = s.lastKnownSeconds || 0;
+    const secondiTrascorsiNelSegmento = s.secondiTrascorsi - tempoPrecedente;
+    const minutiTrascorsiNelSegmento = secondiTrascorsiNelSegmento / 60;
+
+    if (minutiTrascorsiNelSegmento > 0 && barAttualeInserito < barStimatiOra) {
+      const differenzaBar = barStimatiOra - barAttualeInserito;
+      const litriConsumatiNelSegmento = s.litriBombola * differenzaBar;
+      const consumoRealeLmin = litriConsumatiNelSegmento / minutiTrascorsiNelSegmento;
+
+      s.consumoMedio = Math.round(consumoRealeLmin);
+      s.consumoMedio = Math.max(1, Math.min(200, s.consumoMedio));
+
       dettConsumoInput.value = s.consumoMedio;
     }
-    if (barVal != null && s.inEsecuzione && s.storicoGrafico.length > 0) {
-      s.storicoGrafico.push({ t: s.secondiTrascorsi, bar: barVal, consumo: s.consumoMedio });
+
+    // 2. Salva il nuovo punto di riferimento (baseline)
+    s.lastKnownBar = barAttualeInserito;
+    s.lastKnownSeconds = s.secondiTrascorsi;
+
+    // 3. Registra punto corretto nel grafico
+    s.storicoGrafico.push({
+      t: s.secondiTrascorsi,
+      bar: barAttualeInserito,
+      consumo: s.consumoMedio
+    });
+
+    // 4. Riattiva se sensato
+    if (barAttualeInserito > 0 && !s.finePremuto) {
+      s.inEsecuzione = true;
     }
-    dettConsumo.textContent = s.consumoMedio + " L/min";
-    dettAutonomia.textContent = formatOreMinutiSecondi(autonomiaSecondiPerSquadra(s));
-    dettAutonomia.classList.toggle("sotto-5min", autonomiaSecondiPerSquadra(s) > 0 && autonomiaSecondiPerSquadra(s) < 300);
-    dettLitri.textContent = litriResiduiPerSquadra(s) + " L";
-    dettBarStimati.textContent = barPerSquadra(s) + " bar";
-    dettBarStimati.classList.toggle("bar-basso", barPerSquadra(s) <= 50);
-    vistaDettaglio.classList.toggle("sotto-65", barPerSquadra(s) < SOGLIA_BAR_ALARM);
-    if (s.secondiTrascorsi >= 20 && s.storicoGrafico.length > 0) {
-      cardGrafico.hidden = false;
-      disegnaGrafico(s);
-    }
+
+    // 5. Aggiorna tutta l'interfaccia
     updateDettaglioUI();
     aggiornaCardSquadra(s);
     aggiornaStatoAllarme();
+    if (s.secondiTrascorsi >= 20) {
+      cardGrafico.hidden = false;
+      disegnaGrafico(s);
+    }
+    avviaIntervalSeNecessario();
+
+    dettBarAttuali.value = "";
   });
   dettConsumoInput.addEventListener("change", function () {
     const s = getSquadraById(squadraSelezionataId);
