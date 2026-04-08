@@ -414,6 +414,41 @@ body {
   padding: 10px 12px;
 }
 
+.squadra-card-appunti {
+  margin: 2px 0 12px;
+}
+
+.squadra-card-appunti-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.squadra-card-appunti-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 74px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.squadra-card-appunti-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.squadra-card-appunti-textarea::placeholder {
+  color: var(--text-secondary);
+}
+
 .squadra-card-footer {
   display: flex;
   gap: 10px;
@@ -544,6 +579,32 @@ body {
 }
 
 .card-vigili-dettaglio .card-subtitle { margin-bottom: 0; }
+
+.card-appunti {
+  margin-top: 16px;
+}
+
+.appunti-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 110px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.appunti-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.appunti-textarea::placeholder {
+  color: var(--text-secondary);
+}
 
 .card-vigili-head {
   display: flex;

@@ -62,6 +62,7 @@
   const dettVigiliList = document.getElementById("dett-vigili-list");
   const dettNessunVigile = document.getElementById("dett-nessun-vigile");
   const dettAggiungiVigile = document.getElementById("dett-aggiungi-vigile");
+  const dettAppunti = document.getElementById("dett-appunti");
   const popupDettaglioVigili = document.getElementById("popup-dettaglio-vigili");
   const popupDettCercaNome = document.getElementById("popup-dett-cerca-nome");
   const popupDettToggleStoro = document.getElementById("popup-dett-toggle-storo");
@@ -125,6 +126,7 @@
       secondiTrascorsi: 0,
       inEsecuzione: false,
       finePremuto: false,
+      appunti: "",
       litriBombola: config.litriBombola,
       pressioneIniziale: config.pressioneIniziale,
       consumoMedio: config.consumoMedio,
@@ -159,6 +161,10 @@
           '<div class="monitor-item"><span class="label">Tempo trascorso</span><span class="value tempo-card">' + formatOreMinutiSecondi(s.secondiTrascorsi) + '</span></div>' +
           '<div class="monitor-item"><span class="label">Autonomia residua</span><span class="value auto-card' + (autonomiaSecondiPerSquadra(s) < 300 && autonomiaSecondiPerSquadra(s) > 0 ? ' sotto-5min' : '') + '">' + formatOreMinutiSecondi(autonomiaSecondiPerSquadra(s)) + '</span></div>' +
         '</div>' +
+        '<div class="squadra-card-appunti">' +
+          '<label for="appunti-squadra-' + s.id + '" class="squadra-card-appunti-label">APPUNTI</label>' +
+          '<textarea id="appunti-squadra-' + s.id + '" class="squadra-card-appunti-textarea" rows="3" placeholder="Scrivi qui gli appunti..."></textarea>' +
+        '</div>' +
         '<div class="squadra-card-footer">' +
           '<button type="button" class="btn btn-vai" data-id="' + s.id + '"><span class="btn-icon">→</span> Vai</button>' +
           '<button type="button" class="btn btn-elimina-card" data-id="' + s.id + '" aria-label="Elimina monitoraggio"><span class="btn-icon">×</span> Elimina</button>' +
@@ -174,6 +180,16 @@
       card.querySelector(".btn-elimina-card").addEventListener("click", function () {
         eliminaSquadraById(s.id);
       });
+      const appuntiEl = card.querySelector(".squadra-card-appunti-textarea");
+      if (appuntiEl) {
+        appuntiEl.value = s.appunti || "";
+        appuntiEl.addEventListener("input", function () {
+          s.appunti = appuntiEl.value || "";
+          if (squadraSelezionataId === s.id && dettAppunti && dettAppunti.value !== s.appunti) {
+            dettAppunti.value = s.appunti;
+          }
+        });
+      }
     });
   }
 
@@ -233,6 +249,7 @@
     dettConsumoInput.value = s.consumoMedio;
     dettBarAttuali.value = "";
     dettBarAttuali.placeholder = "es. 250";
+    if (dettAppunti) dettAppunti.value = s.appunti || "";
     renderDettaglioVigili();
     dettaglioAvvia.disabled = s.inEsecuzione || s.finePremuto;
     dettaglioPausa.disabled = !s.inEsecuzione || s.finePremuto;
@@ -246,6 +263,7 @@
     vistaDettaglio.hidden = true;
     vistaLista.hidden = false;
     vistaDettaglio.classList.remove("sotto-65");
+    if (dettAppunti) dettAppunti.value = "";
   }
 
   function updateDettaglioUI() {
@@ -387,10 +405,16 @@
     });
   }
 
+  function chiediConferma(azione, messaggio) {
+    const testo = messaggio || ("Confermi: " + azione + "?");
+    return window.confirm(testo);
+  }
+
   dettaglioIndietro.addEventListener("click", chiudiDettaglio);
   dettaglioAvvia.addEventListener("click", function () {
     const s = getSquadraById(squadraSelezionataId);
     if (!s || s.inEsecuzione || s.finePremuto) return;
+    if (!chiediConferma("Avvia", "Vuoi avviare la sessione?")) return;
     s.inEsecuzione = true;
     if (s.storicoGrafico.length === 0) {
       s.storicoGrafico.push({ t: 0, bar: s.pressioneIniziale, consumo: s.consumoMedio });
@@ -401,12 +425,16 @@
   dettaglioPausa.addEventListener("click", function () {
     const s = getSquadraById(squadraSelezionataId);
     if (!s) return;
+    if (!s.inEsecuzione || s.finePremuto) return;
+    if (!chiediConferma("Pausa", "Vuoi mettere in pausa la sessione?")) return;
     s.inEsecuzione = false;
     updateDettaglioUI();
   });
   dettaglioFine.addEventListener("click", function () {
     const s = getSquadraById(squadraSelezionataId);
     if (!s) return;
+    if (!s.inEsecuzione || s.finePremuto) return;
+    if (!chiediConferma("Fine", "Vuoi terminare la sessione? Dopo non potrai riavviarla.")) return;
     s.inEsecuzione = false;
     s.finePremuto = true;
     dettaglioAvvia.disabled = true;
@@ -476,6 +504,18 @@
     s.consumoMedio = (isNaN(c) || c < 1) ? 70 : Math.min(200, c);
     updateDettaglioUI();
   });
+
+  if (dettAppunti) {
+    dettAppunti.addEventListener("input", function () {
+      const s = getSquadraById(squadraSelezionataId);
+      if (!s) return;
+      s.appunti = dettAppunti.value || "";
+      const appuntiCard = document.getElementById("appunti-squadra-" + s.id);
+      if (appuntiCard && appuntiCard.value !== s.appunti) {
+        appuntiCard.value = s.appunti;
+      }
+    });
+  }
 
   function renderPopupDettListaNomi(filter) {
     const s = getSquadraById(squadraSelezionataId);
